@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Data Repository</title>
+    <link id="dynamic-favicon" rel="icon" href="data:image/x-icon;," type="image/x-icon">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            transition: opacity 0.5s ease;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px rgba(0, 195, 255, 0.7);
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        #code-section {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 500px;
+            margin: 50px auto;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 195, 255, 0.3);
+            transition: all 0.5s ease;
+        }
+        
+        .code-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #00c6ff;
+        }
+        
+        .code-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2rem;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #00c6ff;
+            border-radius: 8px;
+            color: white;
+            text-align: center;
+            margin: 15px 0;
+            outline: none;
+            transition: all 0.3s;
+        }
+        
+        .code-input:focus {
+            border-color: #0072ff;
+            box-shadow: 0 0 15px rgba(0, 114, 255, 0.5);
+        }
+        
+        .submit-btn {
+            background: linear-gradient(45deg, #00c6ff, #0072ff);
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+            text-transform: uppercase;
+            width: 100%;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 198, 255, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #00c6ff;
+            color: #fff;
+        }
+
+        .btn-outline:hover {
+            background: rgba(0, 198, 255, 0.1);
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #ff0058, #ff5e62);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            box-shadow: 0 5px 15px rgba(255, 0, 88, 0.4);
+        }
+
+        .btn-stealth {
+            background: linear-gradient(45deg, #8e2de2, #4a00e0);
+            color: white;
+        }
+
+        .btn-stealth:hover {
+            box-shadow: 0 5px 15px rgba(142, 45, 226, 0.4);
+        }
+        
+        .status-message {
+            min-height: 25px;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        
+        .success { color: #00ff9d; }
+        .error { color: #ff0058; }
+
+        .overlay-section {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 32, 39, 0.95);
+            backdrop-filter: blur(15px);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .overlay-section.visible {
+            opacity: 1;
+        }
+
+        .menu-content {
+            text-align: center;
+        }
+
+        .menu-content h2 {
+            font-size: 3.5rem;
+            margin-bottom: 40px;
+            color: #00c6ff;
+            text-shadow: 0 0 20px rgba(0, 195, 255, 0.5);
+            letter-spacing: 3px;
+        }
+
+        .menu-list {
+            list-style: none;
+        }
+
+        .menu-list li {
+            margin: 20px 0;
+        }
+
+        .menu-list a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.5rem;
+            padding: 15px 40px;
+            border: 2px solid transparent;
+            border-radius: 30px;
+            transition: all 0.3s;
+            display: inline-block;
+            width: 300px;
+            background: rgba(0, 0, 0, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .menu-list a:hover {
+            border-color: #00c6ff;
+            background: rgba(0, 198, 255, 0.15);
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 198, 255, 0.4);
+        }
+
+        .settings-panel {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 195, 255, 0.3);
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: left;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .settings-panel h3 {
+            color: #00c6ff;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 195, 255, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+        
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in { animation: fadeIn 0.8s ease forwards; }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .menu-content h2 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div>
+    
+    <div class="container" id="main-container">
+        <header>
+            <h1>SECURE DATA REPOSITORY</h1>
+            <p class="subtitle">Authorized access only. Please enter credentials to proceed.</p>
+        </header>
+        
+        <section id="code-section" class="fade-in">
+            <h2 class="code-title">ACCESS AUTHENTICATION</h2>
+            <p>Enter your access credentials to proceed...</p>
+            <input type="password" id="secret-code" class="code-input" placeholder="Enter access code">
+            <button id="submit-code" class="submit-btn" style="width: auto;">VERIFY CREDENTIALS</button>
+            <div class="status-message" id="status-message"></div>
+            <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.7;">Note: Access is restricted to authorized personnel only.</p>
+        </section>
+        
+        <footer style="text-align: center; padding: 30px 0; margin-top: 50px; opacity: 0.7; font-size: 0.9rem;">
+            <p>SECURE DATA REPOSITORY © 2026 | All access is monitored and recorded</p>
+        </footer>
+    </div>
+
+    <section id="menu-section" class="overlay-section">
+        <div class="menu-content">
+            <h2>SYSTEM DIRECTORY</h2>
+            <ul class="menu-list">
+                <li><a href="#" id="launch-games-btn">Launch Games</a></li>
+                <li><a href="#">Apps</a></li>
+                <li><a href="#" id="open-settings-btn">System Settings</a></li>
+                <li><a href="#" id="logout-btn">Terminate Session</a></li>
+            </ul>
+        </div>
+    </section>
+
+    <section id="games-section" class="overlay-section">
+        <div class="menu-content" style="width: 90%; max-width: 1000px;">
+            <h2 style="font-size: 2.5rem;">NEURAL GAME LINK</h2>
+            <div class="settings-panel" style="max-width: 100%; width: 100%;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3>GN-MATH INTERFACE</h3>
+                    <button id="toggle-fullscreen" class="submit-btn btn-stealth" style="width: auto; padding: 5px 15px; font-size: 0.8rem;">Expand View</button>
+                </div>
+                <div id="game-frame-container" style="position: relative; width: 100%; height: 60vh; background: #000; border: 2px solid #00c6ff; border-radius: 10px; overflow: hidden;">
+                    <iframe src="https://gn-math.github.io/" id="game-iframe" style="width: 100%; height: 100%; border: none;" allowfullscreen></iframe>
+                </div>
+                <div class="button-group">
+                    <button id="back-to-menu-from-games-btn" class="submit-btn btn-outline full-width">Sever Uplink (Return to Menu)</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="settings-section" class="overlay-section">
+        <div class="menu-content">
+            <h2 style="font-size: 2.5rem;">SYSTEM SETTINGS</h2>
+            <div class="settings-panel">
+                <h3>Tab Cloaking</h3>
+                <p>Disguise this page by altering the tab title and icon.</p>
+                <input type="text" id="cloak-title" class="code-input" placeholder="Tab Title (e.g., Google)">
+                <input type="text" id="cloak-icon" class="code-input" placeholder="Icon URL">
+                <div class="button-group">
+                    <button id="apply-cloak-btn" class="submit-btn">Apply Cloak</button>
+                    <button id="reset-cloak-btn" class="submit-btn btn-danger">Reset</button>
+                    <button id="blank-cloak-btn" class="submit-btn btn-stealth full-width">Launch in about:blank</button>
+                </div>
+                <div style="margin-top: 30px;">
+                    <button id="back-to-menu-btn" class="submit-btn btn-outline full-width">Return to Directory</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const SECRET_CODE = "jimmybobby";
+        const DEFAULT_TITLE = "Secure Data Repository";
+        
+        // Sections
+        const mainContainer = document.getElementById('main-container');
+        const menuSection = document.getElementById('menu-section');
+        const settingsSection = document.getElementById('settings-section');
+        const gamesSection = document.getElementById('games-section');
+        
+        // Buttons
+        const submitButton = document.getElementById('submit-code');
+        const logoutBtn = document.getElementById('logout-btn');
+        const openSettingsBtn = document.getElementById('open-settings-btn');
+        const launchGamesBtn = document.getElementById('launch-games-btn');
+        const backToMenuBtn = document.getElementById('back-to-menu-btn');
+        const backToMenuFromGamesBtn = document.getElementById('back-to-menu-from-games-btn');
+        const toggleFullscreen = document.getElementById('toggle-fullscreen');
+        
+        // Logic
+        function checkCode() {
+            const input = document.getElementById('secret-code');
+            const status = document.getElementById('status-message');
+            if (input.value.trim() === SECRET_CODE) {
+                status.textContent = "Access Granted.";
+                status.className = "status-message success";
+                setTimeout(() => {
+                    mainContainer.style.opacity = '0';
+                    setTimeout(() => {
+                        mainContainer.style.display = 'none';
+                        menuSection.style.display = 'flex';
+                        void menuSection.offsetWidth; 
+                        menuSection.classList.add('visible');
+                    }, 500);
+                }, 1000);
+            } else {
+                status.textContent = "Access Denied.";
+                status.className = "status-message error";
+                input.value = '';
+            }
+        }
+
+        submitButton.addEventListener('click', checkCode);
+
+        // Navigation
+        const showSection = (from, to) => {
+            from.classList.remove('visible');
+            setTimeout(() => {
+                from.style.display = 'none';
+                to.style.display = 'flex';
+                void to.offsetWidth;
+                to.classList.add('visible');
+            }, 500);
+        };
+
+        openSettingsBtn.addEventListener('click', (e) => { e.preventDefault(); showSection(menuSection, settingsSection); });
+        launchGamesBtn.addEventListener('click', (e) => { e.preventDefault(); showSection(menuSection, gamesSection); });
+        backToMenuBtn.addEventListener('click', () => showSection(settingsSection, menuSection));
+        backToMenuFromGamesBtn.addEventListener('click', () => showSection(gamesSection, menuSection));
+
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            menuSection.classList.remove('visible');
+            setTimeout(() => {
+                menuSection.style.display = 'none';
+                mainContainer.style.display = 'block';
+                void mainContainer.offsetWidth;
+                mainContainer.style.opacity = '1';
+                document.getElementById('secret-code').value = '';
+            }, 500);
+        });
+
+        toggleFullscreen.addEventListener('click', () => {
+            const container = document.getElementById('game-frame-container');
+            if (container.style.height === '60vh') {
+                container.style.height = '85vh';
+                toggleFullscreen.textContent = "Shrink View";
+            } else {
+                container.style.height = '60vh';
+                toggleFullscreen.textContent = "Expand View";
+            }
+        });
+
+        // Particles
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('particles-js');
+            for (let i = 0; i < 80; i++) {
+                const p = document.createElement('div');
+                p.style.cssText = `position:absolute;width:2px;height:2px;background:rgba(0,198,255,0.5);border-radius:50%;left:${Math.random()*100}vw;top:${Math.random()*100}vh;`;
+                container.appendChild(p);
+                p.animate([{transform:'translate(0,0)'},{transform:`translate(${(Math.random()-0.5)*100}px, ${(Math.random()-0.5)*100}px)`}], {duration: Math.random()*10000+5000, iterations: Infinity, direction: 'alternate'});
+            }
+        });
+
+        // Cloaking
+        document.getElementById('apply-cloak-btn').addEventListener('click', () => {
+            const t = document.getElementById('cloak-title').value;
+            const i = document.getElementById('cloak-icon').value;
+            if (t) document.title = t;
+            if (i) document.getElementById('dynamic-favicon').href = i;
+        });
+    </script>
+</body>
+</html>
